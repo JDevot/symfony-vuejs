@@ -1,4 +1,4 @@
-# symfonyPhp
+# symfony Php vuejs
 
 # Installation
     Dans le dossier server 
