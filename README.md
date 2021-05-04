@@ -3,9 +3,12 @@
 # Installation
     Executer les commandes suivantes :
 
-    composer install    
-    php bin/console doctrine:database:create
-    php bin/console doctrine:schema:update -f
+        composer install    
+        php bin/console doctrine:database:create
+        php bin/console doctrine:schema:update -f
+    
+    Ajouter des fixtures: 
+         bin/console doctrine:fixtures:load
 # Usage
 # Routes
 Liste des articles :
