@@ -65,3 +65,15 @@ Résultat:
   "body": "test"
 }
 ```
+Route: /post/{id}
+
+Méthodes: DELETE
+
+Paramètres:
+
+id : int
+Résultat:
+Status: 204
+```json
+
+```
