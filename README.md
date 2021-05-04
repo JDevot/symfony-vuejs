@@ -47,7 +47,7 @@ Résultat:
   "body": "test"
 }
 ```
-```
+
 Article :
 
 Route: /post/{id}
