@@ -16,7 +16,7 @@ class PostController
     public function __construct(){
     }
     /**
-     * @Route("/post", name="get_all_post", methods={"GET"})   
+     * @Route("/api/post", name="get_all_post", methods={"GET"})   
      */
     public function getAll(PostRepository $postRepository): JsonResponse {
         $posts = $postRepository->findAll();
@@ -32,12 +32,12 @@ class PostController
     }
 
     /**
-     * @Route("/post/{id}", name="update_post", methods={"PUT"})
+     * @Route("/api/post/{id}", name="update_post", methods={"PUT"})
      */
     public function update($id, Request $request,PostRepository $postRepository): JsonResponse {
         $post = $postRepository->findOneBy(['id' => $id]);
         $data = json_decode($request->getContent(), true);
-        
+     
         empty($data['title']) ? true : $post->setTitle($data['title']);
         empty($data['body']) ? true : $post->setBody($data['body']);
         $updatedPost = $postRepository->updatePost($post);
@@ -45,7 +45,7 @@ class PostController
     }
 
     /**
-     * @Route("/post/{id}", name="delete_post", methods={"DELETE"})
+     * @Route("/api/post/{id}", name="delete_post", methods={"DELETE"})
      */
     public function delete($id,PostRepository $postRepository): JsonResponse{
         $post = $postRepository->findOneBy(['id' => $id]);
@@ -53,11 +53,13 @@ class PostController
         return new JsonResponse(['status' => 'Customer deleted'], Response::HTTP_NO_CONTENT);
     }
     /**
-     * @Route("/post/{id}", name="get_one_post", methods={"GET"})   
+     * @Route("/api/post/{id}", name="get_one_post", methods={"GET"})   
      */
     public function get($id,PostRepository $postRepository): JsonResponse {
         try {
+            var_dump($id);
             $post = $postRepository->findOneBy(['id' => $id]);
+            var_dump($post);
             $data = [
                 'id' => $post->getId(),
                 'title' => $post->getTitle(),
@@ -69,14 +71,13 @@ class PostController
         }
     }
     /**
-     * @Route("/post", name="post", methods={"POST"})
+     * @Route("/api/post", name="post", methods={"POST"})
      */
     public function add(Request $request,PostRepository $postRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $title = $data['title'];
         $body = $data['body'];
-
         if (empty($title) || empty($body)){
             throw new NotFoundHttpException('Expecting mandatory parameters');
         }
