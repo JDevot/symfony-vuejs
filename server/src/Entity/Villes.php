@@ -24,16 +24,6 @@ class Villes
      */
     private $nomVille;
 
-    /**
-     * @ORM\OneToMany(targetEntity=EtatDesLieux::class, mappedBy="villes")
-     */
-    private $etatDesLieuxes;
-
-    public function __construct()
-    {
-        $this->etatDesLieuxes = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -47,36 +37,6 @@ class Villes
     public function setNomVille(string $nomVille): self
     {
         $this->nomVille = $nomVille;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|EtatDesLieux[]
-     */
-    public function getEtatDesLieuxes(): Collection
-    {
-        return $this->etatDesLieuxes;
-    }
-
-    public function addEtatDesLieux(EtatDesLieux $etatDesLieux): self
-    {
-        if (!$this->etatDesLieuxes->contains($etatDesLieux)) {
-            $this->etatDesLieuxes[] = $etatDesLieux;
-            $etatDesLieux->setVilles($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEtatDesLieux(EtatDesLieux $etatDesLieux): self
-    {
-        if ($this->etatDesLieuxes->removeElement($etatDesLieux)) {
-            // set the owning side to null (unless already changed)
-            if ($etatDesLieux->getVilles() === $this) {
-                $etatDesLieux->setVilles(null);
-            }
-        }
 
         return $this;
     }

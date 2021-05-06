@@ -22,10 +22,8 @@ class FileUploader
         if(in_array(mime_content_type($base64), $allowedMimeTypes)){
             $fileExtension = explode('/', mime_content_type($base64))[1];
             $fileName = uniqid();
-            var_dump($fileExtension, $fileName);
             $image = explode(',', $base64);
             $data = base64_decode($image[1]);
-            var_dump($this->getTargetDirectory());
             file_put_contents($this->getTargetDirectory()."/".$fileName.".".$fileExtension, $data);
             return $fileName;
         }

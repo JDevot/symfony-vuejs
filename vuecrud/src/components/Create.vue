@@ -4,16 +4,16 @@
   <div class="container">
     <div class="card">
       <div class="card-header">
-        <h3>Add Item</h3>
+        <h3>Création d'un post</h3>
       </div>
       <div class="card-body">
         <form v-on:submit.prevent="addItem">
           <div class="form-group">
-            <label>Title:</label>
+            <label>Titre du post:</label>
             <input type="text" class="form-control" v-model="item.title" />
           </div>
           <div class="form-group">
-            <label>Body:</label>
+            <label>Contenue du post:</label>
             <input type="text" class="form-control" v-model="item.body" />
           </div>
           <div class="form-group">

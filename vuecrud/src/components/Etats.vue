@@ -22,7 +22,7 @@
           </div>
           <div class="form-group">
             <label>nombre de pieces:</label>
-            <input type="text" class="form-control" v-model="item.nbPieces" />
+            <input type="number" class="form-control" v-model="item.nbPieces" />
           </div>
           <div class="form-group">
             <label>Ville :</label>
@@ -34,12 +34,12 @@
           </div>
           <div class="form-group">
             <label>surface:</label>
-            <input type="text" class="form-control" v-model="item.surface" />
+            <input type="number" class="form-control" v-model="item.surface" />
           </div>
           <div class="form-group">
             <label>photo:</label>
             <img style="" :src="item.photo" alt="">
-            <input type="file" class="form-control" @change="onFileChange" accept="image/*" />
+            <input type="file" class="form-control" @change="onFileChange" accept="image/*" multiple/>
           </div>
           <div class="form-group">
             <input type="submit" class="btn btn-primary" value="Add Item" />
@@ -59,7 +59,9 @@ export default {
   data() {
     return {
       image: '',
-      item: {},
+      item: {
+        photo: []
+      },
       optionsVille: {},
       optionsType: {}
     };
@@ -67,9 +69,7 @@ export default {
   mounted() {
     VillesService.getVille().then(
       (res) => {
-        console.log(this.item)
         this.optionsVille = res.data;
-        console.log(this.item)
       },
       (error) => {
         console.log(error);
@@ -82,17 +82,19 @@ export default {
   },
   methods: {
     onFileChange(e){
-       var files = e.target.files[0] 
+       var files = e.target.files
     //  console.log(files)
-      this.createBase64Image(files)
-      console.log(this.item.photo)
+      files.forEach(element => {
+              this.createBase64Image(element)
+      });
+
     },
     createBase64Image(fileObject){
       const reader = new FileReader();
-      reader.onload = (e)=> {
-        this.item.photo = e.target.result
+    
+      reader.onload = ()=> {
+        this.item.photo.push(reader.result)
       };
-      console.log(this.item.photo)
       reader.readAsDataURL(fileObject)
      // reader.readAsBinaryString(fileObject)
     },

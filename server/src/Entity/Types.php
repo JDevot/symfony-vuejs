@@ -24,15 +24,8 @@ class Types
      */
     private $libelle;
 
-    /**
-     * @ORM\OneToMany(targetEntity=EtatDesLieux::class, mappedBy="type")
-     */
-    private $etatDesLieuxes;
 
-    public function __construct()
-    {
-        $this->etatDesLieuxes = new ArrayCollection();
-    }
+
 
     public function getId(): ?int
     {
@@ -51,35 +44,6 @@ class Types
         return $this;
     }
 
-    /**
-     * @return Collection|EtatDesLieux[]
-     */
-    public function getEtatDesLieuxes(): Collection
-    {
-        return $this->etatDesLieuxes;
-    }
-
-    public function addEtatDesLieux(EtatDesLieux $etatDesLieux): self
-    {
-        if (!$this->etatDesLieuxes->contains($etatDesLieux)) {
-            $this->etatDesLieuxes[] = $etatDesLieux;
-            $etatDesLieux->setType($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEtatDesLieux(EtatDesLieux $etatDesLieux): self
-    {
-        if ($this->etatDesLieuxes->removeElement($etatDesLieux)) {
-            // set the owning side to null (unless already changed)
-            if ($etatDesLieux->getType() === $this) {
-                $etatDesLieux->setType(null);
-            }
-        }
-
-        return $this;
-    }
     public function toArray()
     {
         return [

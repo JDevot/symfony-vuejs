@@ -2,37 +2,22 @@
 
 <template>
   <div>
-    <h1>Items</h1>
-
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <td>ID</td>
-          <td>Post item</td>
-          <td>Body item</td>
-          <td>Actions</td>
-        </tr>
-      </thead>
-      <tbody v-if="items">
-        <tr v-for="item in items" :key="item.id">
-          <td>{{ item.id }}</td>
-          <td>{{ item.title }}</td>
-          <td>{{ item.body }}</td>
-          <td>
-            <router-link
-              :to="{ name: 'Edit', params: { id: item.id } }"
-              class="btn btn-primary"
-              >Edit</router-link
-            >
-          </td>
-          <td>
-            <button class="btn btn-danger" v-on:click="deleteItem(item.id)">
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <h2>Poste</h2>
+    <b-card-group columns>
+      <b-card v-for="item in items" :key="item.id" class="text-center">
+        <b-card-title>{{ item.title }} </b-card-title>
+        <b-card-text>{{ item.body }}</b-card-text>
+        <b-link
+          :to="{ name: 'Edit', params: { id: item.id } }"
+          class="btn btn-primary"
+        >
+          Edit</b-link
+        >
+        <b-button class="btn btn-danger ml-3" v-on:click="deleteItem(item.id)">
+          Delete</b-button
+        >
+      </b-card>
+    </b-card-group>
   </div>
 </template>
 
@@ -41,6 +26,7 @@ import PostService from "../services/post.service";
 export default {
   name: "Index",
   data() {
+    
     return {
       items: [],
     };
@@ -56,10 +42,13 @@ export default {
     );
   },
   methods: {
-      async deleteItem(id){
-          await PostService.deletePost(id)
-          PostService.getPost().then((res) => this.items = res.data,err => console.log(err));
-      }
-  }
+    async deleteItem(id) {
+      await PostService.deletePost(id);
+      PostService.getPost().then(
+        (res) => (this.items = res.data),
+        (err) => console.log(err)
+      );
+    },
+  },
 };
 </script>

@@ -1,6 +1,7 @@
 <template>
   <div class="col-md-12">
-    <div class="card card-container">
+    <div class="card text-center card-container">
+      <h5 class="card-title"> Login </h5>
       <img
         id="profile-img"
         src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"

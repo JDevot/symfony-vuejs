@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Entity;
-
+use App\Entity\Image;
 use App\Repository\EtatDesLieuxRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,10 +34,6 @@ class EtatDesLieux
      */
     private $surface;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $photo;
 
     /**
      * @ORM\ManyToOne(targetEntity=Types::class, inversedBy="etatDesLieuxes")
@@ -46,6 +44,16 @@ class EtatDesLieux
      * @ORM\ManyToOne(targetEntity=Villes::class, inversedBy="etatDesLieuxes")
      */
     private $villes;
+
+    /**
+     * @ORM\OneToMany(targetEntity=image::class, mappedBy="etatDesLieux", orphanRemoval=true, cascade={"persist"})
+     */
+    private $photo;
+
+    public function __construct()
+    {
+        $this->photo = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -88,17 +96,6 @@ class EtatDesLieux
         return $this;
     }
 
-    public function getPhoto(): ?string
-    {
-        return $this->photo;
-    }
-
-    public function setPhoto(?string $photo): self
-    {
-        $this->photo = $photo;
-
-        return $this;
-    }
 
     public function getType(): ?Types
     {
@@ -134,5 +131,39 @@ class EtatDesLieux
             'surface' => $this->getSurface(),
             'photo' => $this->getPhoto(),
         ];
+    }
+
+    /**
+     * @return Collection|image[]
+     */
+    public function getPhoto()
+    {
+        $data = [];
+        foreach($this->photo as $photo){
+            array_push($data, $photo->getPath());
+        }
+        return $data;
+    }
+
+    public function addPhoto(image $photo): self
+    {
+        if (!$this->photo->contains($photo)) {
+            $this->photo[] = $photo;
+            $photo->setEtatDesLieux($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhoto(image $photo): self
+    {
+        if ($this->photo->removeElement($photo)) {
+            // set the owning side to null (unless already changed)
+            if ($photo->getEtatDesLieux() === $this) {
+                $photo->setEtatDesLieux(null);
+            }
+        }
+
+        return $this;
     }
 }

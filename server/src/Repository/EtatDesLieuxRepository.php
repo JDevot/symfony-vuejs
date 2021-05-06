@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 use App\Entity\EtatDesLieux;
+use App\Entity\Image;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,12 +23,17 @@ class EtatDesLieuxRepository extends ServiceEntityRepository
 
     public function saveEdl($data,$type,$ville){
         $newEdl = new EtatDesLieux();
+        
+        foreach($data['photos'] as $photo){
+            $image = new Image();
+            $image->setPath($photo);
+            $newEdl->addPhoto($image);
+        }
         $newEdl->setTitre($data['titre'])
                 ->setType($type)
                 ->setVilles($ville)
                 ->setSurface($data['surface'])
-                ->setNbPieces($data['nbPieces'])
-                ->setPhoto($data['photo']);
+                ->setNbPieces($data['nbPieces']);
         $this->manager->persist($newEdl);
         $this->manager->flush();
     }
