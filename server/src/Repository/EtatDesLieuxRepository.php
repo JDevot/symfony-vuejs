@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Repository;
-
 use App\Entity\EtatDesLieux;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,11 +20,11 @@ class EtatDesLieuxRepository extends ServiceEntityRepository
         $this->manager = $manager;
     }
 
-    public function saveEdl($data){
+    public function saveEdl($data,$type,$ville){
         $newEdl = new EtatDesLieux();
         $newEdl->setTitre($data['titre'])
-                ->setType($data['type'])
-                ->setVilles($data['villes'])
+                ->setType($type)
+                ->setVilles($ville)
                 ->setSurface($data['surface'])
                 ->setNbPieces($data['nbPieces'])
                 ->setPhoto($data['photo']);

@@ -27,17 +27,20 @@ class AuthController extends AbstractController
      */
     public function login(): JsonResponse
     {
+        
         $user = $this->getUser();
+        dd($user); 
         return $this->json(array(
             'username' => $user->getEmail(),
         ));
     }
      /**
-     * @Route("/auth/register", name="register", methods={"POST"})
+     * @Route("/api/register", name="register", methods={"POST"})
      */
     public function register(Request $request, UserPasswordEncoderInterface $encoder)
     {
         $data = json_decode($request->getContent(), true);
+        var_dump($data);
         $password = $data['password'];
         $email = $data['email'];
         $user = new User();

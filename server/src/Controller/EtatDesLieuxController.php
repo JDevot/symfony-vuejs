@@ -5,15 +5,18 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Repository\EtatDesLieuxRepository;
+use App\Repository\TypesRepository;
+use App\Repository\VillesRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Exception;
-
+use App\Service\FileUploader;
 class EtatDesLieuxController
 {
+
     public function __construct(){
     }
     /**
@@ -26,8 +29,8 @@ class EtatDesLieuxController
             $data[] = [
             'id' => $edl->getId(),
             'titre' => $edl->getTitre(),
-            'type' => $edl->getType(),
-            'villes' => $edl->getVilles(),
+            'type' => $edl->getType()->getLibelle(),
+            'villes' =>  $edl->getVilles()->getNomVille(),
             'nbPieces' => $edl->getNbPieces(),
             'surface' => $edl->getSurface(),
             'photo' => $edl->getPhoto()
@@ -70,8 +73,8 @@ class EtatDesLieuxController
             $data = [
                 'id' => $edl->getId(),
                 'titre' => $edl->getTitre(),
-                'type' => $edl->getType(),
-                'villes' => $edl->getVilles(),
+                'type' => $edl->getType()->getLibelle(),
+                'villes' =>   $edl->getVilles()->getNomVille(),
                 'nbPieces' => $edl->getNbPieces(),
                 'surface' => $edl->getSurface(),
                 'photo' => $edl->getPhoto()
@@ -84,15 +87,16 @@ class EtatDesLieuxController
     /**
      * @Route("/api/edl", name="post_edl", methods={"POST"})
      */
-    public function add(Request $request,EtatDesLieuxRepository $etatDesLieuxRepository): JsonResponse
+    public function add(Request $request,EtatDesLieuxRepository $etatDesLieuxRepository, TypesRepository $typesRepository, VillesRepository $villeRepository, FileUploader $file_uploader): JsonResponse
     {
+        
         $data = json_decode($request->getContent(), true);
-        if (empty($data['titre']) || empty($data['type']) || empty($data['villes']) || 
-        empty($data['villes']) ||  empty($data['nbPieces']) ||  empty($data['surface']) 
-        ||   empty($data['photo'])){
-            throw new NotFoundHttpException('Expecting mandatory parameters');
-        }
-        $etatDesLieuxRepository->saveEdl($data);
-        return new JsonResponse(['status' => 'Etats des lieux Created'], Response::HTTP_CREATED);
+        $type = $typesRepository->findOneBy(['libelle' => $data['type']]);
+        $ville = $villeRepository->findOneBy(['nomVille' => $data['nomVille']]);
+        $data['photo'] = $file_uploader->uploadBase64($data['photo']);
+    
+       // file_put_contents($fileName.".png",$data);
+       $test = $etatDesLieuxRepository->saveEdl($data, $type,$ville);
+        return new JsonResponse($test, Response::HTTP_CREATED);
     }
 }
