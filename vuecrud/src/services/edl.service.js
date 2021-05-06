@@ -12,8 +12,7 @@ class EdlService {
     return axios.delete(`edl/${id}`,{ headers: authHeader()})
   }
   postEdl(body){
-      console.log(body)
-   return axios.post(`edl`, body,{ headers: authHeader()}).then(res => console.log('"é&"é&',res), err => console.log('eazezazea', err))
+   return axios.post(`edl`, body,{ headers: authHeader()})
   }
   getOneEdl(id){
     return axios.get(`edl/${id}`,{ headers: authHeader()})

@@ -5,11 +5,14 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Exception;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class AuthController extends AbstractController
 {
     /**
@@ -27,32 +30,37 @@ class AuthController extends AbstractController
      */
     public function login(): JsonResponse
     {
-        
-        $user = $this->getUser();
-        dd($user); 
-        return $this->json(array(
-            'username' => $user->getEmail(),
-        ));
+            $user = $this->getUser();
+            return $this->json(array(
+                'id' => $user->getId(),
+                'username' => $user->getEmail(),
+            ), Response::HTTP_OK);
     }
-     /**
-     * @Route("/api/register", name="register", methods={"POST"})
+    /**
+     * @Route("/register", name="register", methods={"POST"})
      */
-    public function register(Request $request, UserPasswordEncoderInterface $encoder)
+    public function register(Request $request, UserPasswordEncoderInterface $encoder, UserRepository $userRepository)
     {
-        $data = json_decode($request->getContent(), true);
-        var_dump($data);
-        $password = $data['password'];
-        $email = $data['email'];
-        $user = new User();
-        
-        $user->setPassword($encoder->encodePassword($user, $password));
-        $user->setEmail($email);
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($user);
-        $em->flush();
-        return $this->json([
-            'user' => $user->getEmail()
-        ]);
+        try {
+            $data = json_decode($request->getContent(), true);
+            if (empty($data['username']) || empty($data['password'])) {
+                throw new NotFoundHttpException('Expecting mandatory parameters');
+            }
+            $userInDb = $userRepository->findOneBy(['email' => $data['username']]);
+            if ($userInDb){
+                return $this->json('error: utilisateur présent dans la db', Response::HTTP_CONFLICT);
+            }
+            $password = $data['password'];
+            $email = $data['username'];
+            $user = new User();
+            $user->setPassword($encoder->encodePassword($user, $password));
+            $user->setEmail($email);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+            return $this->json('status: created', Response::HTTP_CREATED);
+        } catch (Exception $err) {
+            return $this->json($err, Response::HTTP_BAD_REQUEST);
+        }
     }
-
 }

@@ -60,7 +60,7 @@ class EtatDesLieuxController extends AbstractController
             empty($data['nbPieces']) ? true : $edl->setType($data['nbPieces']);
             empty($data['surface']) ? true : $edl->setType($data['surface']);
             empty($data['photo']) ? true : $edl->setType($data['photo']);
-            $updatedEdl = $etatDesLieuxRepository->updatePost($edl);
+            $updatedEdl = $etatDesLieuxRepository->updateEdl($edl);
             return new JsonResponse($updatedEdl->toArray(), Response::HTTP_OK);
         } catch (Exception $err) {
             return new JsonResponse($err, Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -88,7 +88,7 @@ class EtatDesLieuxController extends AbstractController
     public function delete($id, EtatDesLieuxRepository $etatDesLieuxRepository): JsonResponse
     {
         $edl = $etatDesLieuxRepository->findOneBy(['id' => $id]);
-        $etatDesLieuxRepository->removePost($edl);
+        $etatDesLieuxRepository->removeEdl($edl);
         return new JsonResponse(['status' => 'edl deleted'], Response::HTTP_NO_CONTENT);
     }
 

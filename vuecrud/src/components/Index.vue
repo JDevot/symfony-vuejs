@@ -5,8 +5,10 @@
     <h2>Poste</h2>
     <b-card-group columns>
       <b-card v-for="item in items" :key="item.id" class="text-center">
-        <b-card-title>{{ item.title }} </b-card-title>
-        <b-card-text>{{ item.body }}</b-card-text>
+        <b-card-title> Titre: {{ item.title }} </b-card-title>
+        <b-card-text v-if="item.author.email"> auteur: {{item.author.email}} </b-card-text>
+        <b-card-text v-if="item.categorie.label"> Categorie: {{item.categorie.label}} </b-card-text>
+        <b-card-text>Contenue: {{ item.body }}</b-card-text>
         <b-link
           :to="{ name: 'Edit', params: { id: item.id } }"
           class="btn btn-primary"

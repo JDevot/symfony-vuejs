@@ -7,14 +7,14 @@ class PostService {
     return axios.get('post',{ headers: authHeader() });
   }
   putPost(id,data) {
+    console.log(data)
     return axios.put(`post/${id}`,data,{ headers: authHeader()})
   }
   deletePost(id){
     return axios.delete(`post/${id}`,{ headers: authHeader()})
   }
   postPost(body){
-    console.log(body)
-    return axios.post(`post`, body,{ headers: authHeader()})
+   return axios.post(`post`, body,{ headers: authHeader()})
   }
   getOnePost(id){
     return axios.get(`post/${id}`,{ headers: authHeader()})

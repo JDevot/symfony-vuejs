@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
  */
@@ -18,14 +18,28 @@ class Post
     private $id;
 
     /**
+     * @Groups("post")
      * @ORM\Column(type="string", length=255)
      */
     private $title;
 
     /**
+     * @Groups("post")
      * @ORM\Column(type="text")
      */
     private $body;
+
+    /**
+     * @Groups("post")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="article")
+     */
+    private $user;
+
+    /**
+     * @Groups("post")
+     * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="posts")
+     */
+    private $categorie;
 
     public function getId(): ?int
     {
@@ -61,6 +75,38 @@ class Post
             'id' => $this->getId(),
             'title' => $this->getTitle(),
             'body' => $this->getBody(),
+            'author' => [
+                'email' => $this->getUser() ? $this->getUser()->getEmail() : null,
+                'id' => $this->getUser() ? $this->getUser()->getId() : null
+            ],
+            'categorie' => [
+                'label'  => $this->getCategorie() ? $this->getCategorie()->getLabel() : null,
+                'id' => $this->getCategorie() ? $this->getCategorie()->getId() : null 
+            ]
         ];
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getCategorie(): ?categorie
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?categorie $categorie): self
+    {
+        $this->categorie = $categorie;
+
+        return $this;
     }
 }

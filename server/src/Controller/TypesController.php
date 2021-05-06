@@ -37,8 +37,8 @@ class TypesController{
         $data = json_decode($request->getContent(), true);
      
         empty($data['libelle']) ? true : $types->setLibelle($data['libelle']);
-        $updatedVilles = $typesRepository->updateType($types);
-        return new JsonResponse($updatedVilles->toArray(), Response::HTTP_OK);
+        $updatedTypes= $typesRepository->updateType($types);
+        return new JsonResponse($updatedTypes->toArray(), Response::HTTP_OK);
     }
 
     /**

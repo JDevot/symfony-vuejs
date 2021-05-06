@@ -21,10 +21,12 @@ class PostRepository extends ServiceEntityRepository
         $this->manager = $manager;
     }
 
-    public function savePost($title, $body){
+    public function savePost($title, $body, $user, $categorie){
         $newPost = new Post();
         $newPost->setTitle($title)
-                ->setBody($body);
+                ->setBody($body)
+                ->setUser($user)
+                ->setCategorie($categorie);
         $this->manager->persist($newPost);
         $this->manager->flush();
     }

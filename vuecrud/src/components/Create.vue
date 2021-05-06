@@ -17,6 +17,14 @@
             <input type="text" class="form-control" v-model="item.body" />
           </div>
           <div class="form-group">
+          <label>Categorie:</label>
+            <select v-model="item.categorie">
+                <option v-for="option in categories" v-bind:value="option.label" v-bind:key="option.id">
+                    {{option.label}}
+                </option>
+            </select>
+          </div>
+          <div class="form-group">
             <input type="submit" class="btn btn-primary" value="Add Item" />
           </div>
         </form>
@@ -27,12 +35,24 @@
 
 <script>
 import PostService from "../services/post.service";
+import CategorieService from "../services/categorie.service";
 export default {
   components: {},
   data() {
     return {
       item: {},
+      categories: {}
     };
+  },
+  mounted() {
+    CategorieService.getCategorie().then(
+      (res) => {
+        console.log(res.data)
+        this.categories = res.data;
+      },
+      (error) => {
+        console.log(error);
+      })
   },
   methods: {
     async addItem() {
