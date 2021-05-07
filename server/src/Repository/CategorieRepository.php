@@ -25,6 +25,15 @@ class CategorieRepository extends ServiceEntityRepository
         $this->manager->persist($newCategorie);
         $this->manager->flush();
     }
+    public function removeCategorie(Categorie $categorie){
+        $this->manager->remove($categorie);
+        $this->manager->flush();
+    }
+    public function updateCategorie(Categorie $categorie): Categorie {
+        $this->manager->persist($categorie);
+        $this->manager->flush();
+        return $categorie;
+    }
     // /**
     //  * @return Categorie[] Returns an array of Categorie objects
     //  */

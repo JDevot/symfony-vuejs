@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
+ *@ORM\Table(name="post", indexes={@ORM\Index(columns={"title"}, flags={"fulltext"})})
  */
 class Post
 {
@@ -40,6 +41,11 @@ class Post
      * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="posts")
      */
     private $categorie;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $resume;
 
     public function getId(): ?int
     {
@@ -82,7 +88,8 @@ class Post
             'categorie' => [
                 'label'  => $this->getCategorie() ? $this->getCategorie()->getLabel() : null,
                 'id' => $this->getCategorie() ? $this->getCategorie()->getId() : null 
-            ]
+            ],
+            'resume' => $this->getResume()
         ];
     }
 
@@ -106,6 +113,18 @@ class Post
     public function setCategorie(?categorie $categorie): self
     {
         $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    public function getResume(): ?string
+    {
+        return $this->resume;
+    }
+
+    public function setResume(string $resume): self
+    {
+        $this->resume = $resume;
 
         return $this;
     }

@@ -20,12 +20,32 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
         $this->manager = $manager;
     }
-
-    public function savePost($title, $body, $user, $categorie){
+        /**
+     * Recherche les annonces en fonction du formulaire
+     * @return void 
+     */
+    public function search($mots = null, $categorie = null){
+        $query = $this->createQueryBuilder('p');
+        if($mots != null){
+            $query->Where('MATCH_AGAINST(p.title) AGAINST (:mots boolean)>0')
+                ->setParameter('mots', $mots);
+        }
+        if($categorie != null){
+            $query->join('p.categorie', 'c');
+            $query->andWhere('c.id = :id')
+                ->setParameter('id', $categorie);
+        }
+        $query->join('p.user', 'u')
+                ->addSelect('u')
+                ->addSelect('c');
+        return $query->getQuery()->getArrayResult();
+    }
+    public function savePost($title, $body, $user, $categorie,$resume){
         $newPost = new Post();
         $newPost->setTitle($title)
                 ->setBody($body)
                 ->setUser($user)
+                ->setResume($resume)
                 ->setCategorie($categorie);
         $this->manager->persist($newPost);
         $this->manager->flush();

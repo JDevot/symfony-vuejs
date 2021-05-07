@@ -13,7 +13,7 @@ class CategorieService {
             headers: authHeader()
         })
     }
-    deletePost(id) {
+    deleteCategorie(id) {
         return axios.delete(`categories/${id}`, {
             headers: authHeader()
         })
@@ -23,7 +23,7 @@ class CategorieService {
             headers: authHeader()
         })
     }
-    getOnePost(id) {
+    getOneCategorie(id) {
         return axios.get(`categories/${id}`, {
             headers: authHeader()
         })

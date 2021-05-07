@@ -85,4 +85,11 @@ class Categorie
 
         return $this;
     }
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'label' => $this->getLabel(),
+        ];
+    }
 }

@@ -4,7 +4,7 @@ axios.defaults.baseURL = 'http://127.0.0.1:8000/api/';
 
 class AuthService {
   login(user) {
-    console.log(user)
+    axios.defaults.baseURL = 'http://127.0.0.1:8000/api/';
     return axios
       .post('login_check', {
         username: user.username,
@@ -24,8 +24,10 @@ class AuthService {
   }
 
   register(user) {
+    axios.defaults.baseURL = 'http://127.0.0.1:8000/';
+
     return axios.post('register', {
-      email: user.username,
+      username: user.username,
       password: user.password
     });
   }

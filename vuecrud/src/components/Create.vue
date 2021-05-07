@@ -17,6 +17,10 @@
             <input type="text" class="form-control" v-model="item.body" />
           </div>
           <div class="form-group">
+            <label>Resume du post:</label>
+            <input type="text" class="form-control" v-model="item.resume" />
+          </div>
+          <div class="form-group">
           <label>Categorie:</label>
             <select v-model="item.categorie">
                 <option v-for="option in categories" v-bind:value="option.label" v-bind:key="option.id">

@@ -19,6 +19,10 @@ class PostService {
   getOnePost(id){
     return axios.get(`post/${id}`,{ headers: authHeader()})
   }
+  searchPoste(data){
+    console.log(data)
+    return axios.post(`post/search`, data,{ headers: authHeader()})
+  }
 }
 
 export default new PostService();

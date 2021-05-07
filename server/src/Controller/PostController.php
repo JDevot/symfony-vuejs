@@ -32,14 +32,15 @@ class PostController extends AbstractController
                 'id' => $post->getId(),
                 'title' => $post->getTitle(),
                 'body' => $post->getBody(),
-                'author' => [
+                'user' => [
                     'email' => $post->getUser() ? $post->getUser()->getEmail() : null,
                     'id' => $post->getUser() ? $post->getUser()->getId() : null
                 ],
                 'categorie' => [
                     'label' => $post->getCategorie() ? $post->getCategorie()->getLabel() : null,
                     'id' => $post->getCategorie() ? $post->getCategorie()->getId() : null
-                ]
+                ],
+                'resume' => $post->getResume()
             ];
         }
         return new JsonResponse($data, Response::HTTP_OK);
@@ -50,15 +51,23 @@ class PostController extends AbstractController
      */
     public function update($id, Request $request, PostRepository $postRepository, CategorieRepository $categorieRepository): JsonResponse
     {
-        $post = $postRepository->findOneBy(['id' => $id]);
-        $data = json_decode($request->getContent(), true);
-        empty($data['categorie']) ? true : $post->setCategorie($categorieRepository->findOneBy(['label' => $data['categorie']['label']]));
-        empty($data['title']) ? true : $post->setTitle($data['title']);
-        empty($data['body']) ? true : $post->setBody($data['body']);
-        $updatedPost = $postRepository->updatePost($post);
-        return new JsonResponse($updatedPost->toArray(), Response::HTTP_OK);
+        try {
+            $post = $postRepository->findOneBy(['id' => $id]);
+            if (!$post) {
+                throw new NotFoundHttpException('la post avec l id' . $id . 'n existe pas');
+            }
+            $data = json_decode($request->getContent(), true);
+            empty($data['categorie']) ? true : $post->setCategorie($categorieRepository->findOneBy(['label' => $data['categorie']['label']]));
+            empty($data['title']) ? true : $post->setTitle($data['title']);
+            empty($data['resume']) ? true : $post->setResume($data['resume']);
+            empty($data['body']) ? true : $post->setBody($data['body']);
+            $updatedPost = $postRepository->updatePost($post);
+            return new JsonResponse($updatedPost->toArray(), Response::HTTP_OK);
+        } catch (Exception $err) {
+            return new JsonResponse($err, Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
-     /**
+    /**
      * @Route("/api/post/categorie/{id}", name="search_categorie", methods={"GET"})
      */
     public function searchCategorie($id, PostRepository $postRepository): JsonResponse
@@ -70,14 +79,15 @@ class PostController extends AbstractController
                 'id' => $post->getId(),
                 'title' => $post->getTitle(),
                 'body' => $post->getBody(),
-                'author' => [
+                'user' => [
                     'email' => $post->getUser() ? $post->getUser()->getEmail() : null,
                     'id' => $post->getUser() ? $post->getUser()->getId() : null
                 ],
                 'categorie' => [
                     'label' => $post->getCategorie() ? $post->getCategorie()->getLabel() : null,
                     'id' => $post->getCategorie() ? $post->getCategorie()->getId() : null
-                ]
+                ],
+                'resume' => $post->getResume()
             ];
         }
         return new JsonResponse($data, Response::HTTP_OK);
@@ -94,26 +104,45 @@ class PostController extends AbstractController
                 'id' => $post->getId(),
                 'title' => $post->getTitle(),
                 'body' => $post->getBody(),
-                'author' => [
+                'user' => [
                     'email' => $post->getUser() ? $post->getUser()->getEmail() : null,
                     'id' => $post->getUser() ? $post->getUser()->getId() : null
                 ],
                 'categorie' => [
                     'label' => $post->getCategorie() ? $post->getCategorie()->getLabel() : null,
                     'id' => $post->getCategorie() ? $post->getCategorie()->getId() : null
-                ]
+                ],
+                'resume' => $post->getResume()
             ];
         }
         return new JsonResponse($data, Response::HTTP_OK);
+    }
+     /**
+     * @Route("/api/post/search", name="search_author", methods={"POST"})
+     */
+    public function search(Request $request, PostRepository $postRepository): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        empty($data['mots']) ? $mots = null : $mots = $data['mots'];
+        empty($data['categorie']) ? $categorie = null : $categorie = $data['categorie'];
+        $posts = $postRepository->search($mots, $categorie);
+        return  $this->json($posts, Response::HTTP_OK);
     }
     /**
      * @Route("/api/post/{id}", name="delete_post", methods={"DELETE"})
      */
     public function delete($id, PostRepository $postRepository): JsonResponse
     {
-        $post = $postRepository->findOneBy(['id' => $id]);
-        $postRepository->removePost($post);
-        return new JsonResponse(['status' => 'Customer deleted'], Response::HTTP_NO_CONTENT);
+        try {
+            $post = $postRepository->findOneBy(['id' => $id]);
+            if (!$post) {
+                throw new NotFoundHttpException('la post avec l id' . $id . 'n existe pas');
+            }
+            $postRepository->removePost($post);
+            return new JsonResponse(['status' => 'Customer deleted'], Response::HTTP_NO_CONTENT);
+        } catch (Exception $err) {
+            return new JsonResponse($err, Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
     /**
      * @Route("/api/post/{id}", name="get_one_post", methods={"GET"})   
@@ -122,21 +151,22 @@ class PostController extends AbstractController
     {
         try {
             $post = $postRepository->findOneBy(['id' => $id]);
-            if (!$post){
-                throw new NotFoundHttpException('le post avec l id'.$id .'n existe pas');
+            if (!$post) {
+                throw new NotFoundHttpException('le post avec l id' . $id . 'n existe pas');
             }
             $data = [
                 'id' => $post->getId(),
                 'title' => $post->getTitle(),
                 'body' => $post->getBody(),
-                'author' => [
+                'user' => [
                     'email' => $post->getUser() ? $post->getUser()->getEmail() : null,
                     'id' => $post->getUser() ? $post->getUser()->getId() : null
                 ],
                 'categorie' => [
                     'label' => $post->getCategorie() ? $post->getCategorie()->getLabel() : null,
                     'id' => $post->getCategorie() ? $post->getCategorie()->getId() : null
-                 ]
+                ],
+                'resume' => $post->getResume()
             ];
             return new JsonResponse($data, Response::HTTP_OK);
         } catch (Exception $err) {
@@ -155,13 +185,16 @@ class PostController extends AbstractController
             }
             $title = $data['title'];
             $body = $data['body'];
+            $resume = $data['resume'];
             $user = $this->getUser();
-           $categorie = $categorieRepository->findOneBy(['label' => $data['categorie']]);
-
-            $postRepository->savePost($title, $body, $user,$categorie);
+            $categorie = $categorieRepository->findOneBy(['label' => $data['categorie']]);
+            if (!$categorie) {
+                throw new NotFoundHttpException('la categorie avec l id' . $data['categorie'] . 'n existe pas');
+            }
+            $postRepository->savePost($title, $body, $user, $categorie, $resume);
             return new JsonResponse(['status' => 'Post Created'], Response::HTTP_CREATED);
         } catch (Exception $err) {
-            
+
             return new JsonResponse($err, Response::HTTP_FORBIDDEN);
         }
     }

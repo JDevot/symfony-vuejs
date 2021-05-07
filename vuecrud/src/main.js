@@ -20,12 +20,18 @@ import {
   faSignOutAlt
 } from '@fortawesome/free-solid-svg-icons';
 import App from './App.vue';
+import EditCategorie from './components/EditCategorie.vue';
 import Etats from './components/Etats.vue'
 import Create from './components/Create.vue';
 import Edit from './components/Edit.vue';
 import Index from './components/Index.vue';
 import Login from './components/Login.vue';
 import Register from './components/Register.vue';
+import Categorie from './components/Categorie.vue';
+import AddCategorie from './components/AddCategorie.vue';
+import AddUser from './components/AddUser.vue';
+import Users from'./components/Users.vue';
+import EditUser from './components/EditUser.vue';
 import store from './store'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/nprogress/nprogress.css';
@@ -55,6 +61,12 @@ const routes = [
     component: Navbar
   },
   {
+    name: 'Categorie',
+    path: '/categorie',
+    component: Categorie,
+    meta: {requiresAuth: true},
+  },
+  {
     name: 'Create',
     path: '/create',
     component: Create,
@@ -64,6 +76,36 @@ const routes = [
     name: 'Edit',
     path: '/edit',
     component: Edit,
+    meta: {requiresAuth: true},
+  },
+  {
+    name: 'User',
+    path: '/user',
+    component: Users,
+    meta: {requiresAuth: true},
+  },
+  {
+    name: 'AddUser',
+    path: '/Adduser',
+    component: AddUser,
+    meta: {requiresAuth: true},
+  },
+  {
+    name: 'AddCategorie',
+    path: '/Addcategorie',
+    component: AddCategorie,
+    meta: {requiresAuth: true},
+  },
+  {
+    name: 'EditCategorie',
+    path: '/Editcategorie',
+    component: EditCategorie,
+    meta: {requiresAuth: true},
+  },
+  {
+    name: 'EditUser',
+    path: '/Edituser',
+    component: EditUser,
     meta: {requiresAuth: true},
   },
   {
