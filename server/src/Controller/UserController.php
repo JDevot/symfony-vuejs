@@ -22,7 +22,7 @@ class UserController extends AbstractController
     {
     }
     /**
-     * @Route("/user", name="get_all_user", methods={"GET"})   
+     * @Route("/api/user", name="get_all_user", methods={"GET"})   
      */
     public function getAll(UserRepository $userRepository): JsonResponse
     {
@@ -49,6 +49,9 @@ class UserController extends AbstractController
     {
         try {
             $user = $userRepository->findOneBy(['id' => $id]);
+            if (!$user) {
+                throw new NotFoundHttpException('la post avec l id' . $id . 'n existe pas');
+            }
             $data = json_decode($request->getContent(), true);
             empty($data['username']) ? true : $user->setEmail($data['username']);
             $updatedUser = $userRepository->updateUser($user);
@@ -65,15 +68,22 @@ class UserController extends AbstractController
         $user = $userRepository->findBy(['id' => $id]);
         return $this->json($user);
     }
-  
+
     /**
      * @Route("/api/user/{id}", name="delete_user", methods={"DELETE"})
      */
     public function delete($id, UserRepository $userRepository): JsonResponse
     {
-        $user = $userRepository->findOneBy(['id' => $id]);
-        $userRepository->removeUser($user);
-        return new JsonResponse(['status' => 'user deleted'], Response::HTTP_NO_CONTENT);
+        try {
+            $user = $userRepository->findOneBy(['id' => $id]);
+            if (!$user) {
+                throw new NotFoundHttpException('l user avec l id' . $id . 'n existe pas');
+            }
+            $userRepository->removeUser($user);
+            return new JsonResponse(['status' => 'user deleted'], Response::HTTP_NO_CONTENT);
+        } catch (Exception $err) {
+            return new JsonResponse($err, Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
