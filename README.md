@@ -12,6 +12,7 @@
         Ajouter des fixtures: 
             bin/console doctrine:fixtures:load
         Penser a modifier le .env
+        Lancer le serveur symfony serve
     Vuejs:
         dans le dossier vuecrud
             Executer les commandes suivantes :
